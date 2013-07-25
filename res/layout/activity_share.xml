@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativeLayoutShare"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/listViewShareList" >
+
+        <ImageView
+            android:id="@+id/imageViewSharePicture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/app_name" />
+
+        <ImageButton
+            android:id="@+id/imageButtonClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/imageViewSharePicture"
+            android:layout_alignLeft="@+id/imageViewSharePicture"
+            android:layout_marginLeft="30dip"
+            android:background="@drawable/upload_done"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/listViewShareList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ToolbarImageView" />
+
+    <ImageView
+        android:id="@+id/ToolbarImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/tablebk2" />
+
+    <Button
+        android:id="@+id/buttonShareBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/nav_back" />
+
+    <Button
+        android:id="@+id/buttonShareDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/nav_done" />
+
+</RelativeLayout>

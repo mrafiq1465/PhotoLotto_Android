@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/buttonSelectOverlayBack"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/imagePaddingHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/takephoto_background_top" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/imageFocusDot" >
+
+        <FrameLayout
+            android:id="@+id/camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true" />
+
+        <ImageView
+            android:id="@+id/imageViewOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitStart" />
+
+        <ImageView
+            android:id="@+id/imagePadding"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/imageViewCaptureBar"
+            android:layout_below="@+id/imageViewOverlay"
+            android:scaleType="fitEnd"
+            android:background="@drawable/takephoto_background" />
+
+        <ImageView
+            android:id="@+id/imageGraphic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/gridViewOverlay"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/overlays_tapgraphic"
+            android:contentDescription="@string/app_name"
+        	android:paddingBottom="5dp"
+            android:paddingTop="5dp" />
+    
+        <GridView
+            android:id="@+id/gridViewOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonCapture"            
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:horizontalSpacing="5dp"
+        	android:listSelector="#00000000"
+            android:verticalSpacing="15dp"
+        	android:stretchMode="none"
+			android:columnWidth="100dp"
+			android:paddingTop="5dp" >
+        </GridView>
+
+        <ImageView
+            android:id="@+id/imageViewCaptureBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/takephoto_background_bar"
+            android:contentDescription="@string/app_name" />
+
+        <Button
+            android:id="@+id/buttonCapture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/takephoto_cam" />
+
+        <Button
+            android:id="@+id/buttonToggleCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/imageViewCaptureBar"
+            android:layout_margin="10dip"
+            android:background="@drawable/takephoto_switchcam1" />
+
+        <Button
+            android:id="@+id/buttonFlash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageViewCaptureBar"
+            android:layout_margin="10dip"
+            android:layout_toLeftOf="@+id/buttonToggleCamera"
+            android:background="@drawable/takephoto_flashoff" />
+
+        <Button
+            android:id="@+id/buttonSelectOverlayBack3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/nav_back" />
+
+    </RelativeLayout>
+
+	<ImageView
+	    android:id="@+id/imageFocusDot"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:src="@drawable/filter_dot"
+	    android:visibility="invisible" />
+            
+</RelativeLayout>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:id="@+id/editTextSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:inputType="textShortMessage"
+        android:maxLines="1"
+        android:padding="5dip"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/searchTypebar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextSearch"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="4" >
+
+        <Button
+            android:id="@+id/searchTabPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/searchbar_left_tap_off"
+            android:text="Play"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/searchTabBrands"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/searchbar_mid_tap_off"
+            android:text="Brands"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/searchTabPersonal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/searchbar_mid_tap_off"
+            android:text="Personal"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/searchTabAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/searchbar_right_tap_on"
+            android:text="All"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewPixtaPlayHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchTypebar"
+        android:background="@drawable/eventblack"
+        android:gravity="center"
+        android:padding="10dip"
+        android:text="Pixta Play"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/list_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewPixtaPlayHeader"
+        android:layout_above="@+id/linearLayoutTable"
+        android:orientation="vertical" >
+
+        <eu.erikw.PullToRefreshListView
+            android:id="@+id/listViewPixtaEvents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <eu.erikw.PullToRefreshListView
+            android:id="@+id/listViewEvents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <eu.erikw.PullToRefreshListView
+            android:id="@+id/listViewEventsNational"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:weightSum="4" >
+
+        <Button
+            android:id="@+id/buttonPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/tab_play_on" />
+
+        <Button
+            android:id="@+id/buttonNearMe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/tab_nearme_off" />
+
+        <Button
+            android:id="@+id/buttonNational"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/tab_national_off" />
+
+        <Button
+            android:id="@+id/buttonSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/tab_search_off" />
+    </LinearLayout>
+
+</RelativeLayout>
