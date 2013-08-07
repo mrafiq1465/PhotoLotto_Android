@@ -1,6 +1,5 @@
 package com.abir.photolotto;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,17 +15,18 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class HomeActivity extends Activity implements LocationListener, ReadFeedEventHandler {
+public class HomeActivity extends BaseActivity implements LocationListener,
+		ReadFeedEventHandler {
 
-	private LocationManager	mLocationManager;
-	private Location		mLocation;
-	private Button			mButtonStart, mButtonReload;
-	private boolean			bButtonState	= false;
-	private ImageView		mImageViewLoading;
-	private ReadFeed		mReadFeedEvent = new ReadFeed();
-	private ImageView		mImageViewAnimation;
-	private boolean			mGPSConfirmed = false;
-	
+	private LocationManager mLocationManager;
+	private Location mLocation;
+	private Button mButtonStart, mButtonReload;
+	private boolean bButtonState = false;
+	private ImageView mImageViewLoading;
+	private ReadFeed mReadFeedEvent = new ReadFeed(HomeActivity.this);
+	private ImageView mImageViewAnimation;
+	private boolean mGPSConfirmed = false;
+
 	private void changeButtonState() {
 		mButtonStart.setEnabled(bButtonState);
 		mButtonReload.setVisibility(bButtonState ? View.GONE : View.VISIBLE);
@@ -34,23 +34,25 @@ public class HomeActivity extends Activity implements LocationListener, ReadFeed
 	}
 
 	@Override
-    /**
-     * This method is called whenever the Activity becomes visible or invisible to the user.
-     * During this method call its possible to start the animation.
-     */
-	public void onWindowFocusChanged (boolean hasFocus) {
+	/**
+	 * This method is called whenever the Activity becomes visible or invisible to the user.
+	 * During this method call its possible to start the animation.
+	 */
+	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		AnimationDrawable frameAnimation = (AnimationDrawable) mImageViewAnimation.getBackground();
-		if(hasFocus) {
+		AnimationDrawable frameAnimation = (AnimationDrawable) mImageViewAnimation
+				.getBackground();
+		if (hasFocus) {
 			frameAnimation.start();
 		} else {
 			frameAnimation.stop();
 		}
 	}
-	
+
 	@Override
 	protected void onDestroy() {
-		AnimationDrawable frameAnimation = (AnimationDrawable) mImageViewAnimation.getBackground();
+		AnimationDrawable frameAnimation = (AnimationDrawable) mImageViewAnimation
+				.getBackground();
 		frameAnimation.stop();
 		mImageViewAnimation.setBackgroundResource(R.drawable.image_home);
 		mImageViewAnimation = null;
@@ -60,15 +62,17 @@ public class HomeActivity extends Activity implements LocationListener, ReadFeed
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		mLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		if(mLocation != null) {
-            // Do something with the recent location fix otherwise wait for the update below
-        }
-        else {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        }
+		mLocation = mLocationManager
+				.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		if (mLocation != null) {
+			// Do something with the recent location fix otherwise wait for the
+			// update below
+		} else {
+			mLocationManager.requestLocationUpdates(
+					LocationManager.GPS_PROVIDER, 0, 0, this);
+		}
 
 		setContentView(R.layout.activity_home);
 		mImageViewAnimation = (ImageView) findViewById(R.id.imageViewAnimation);
@@ -77,7 +81,7 @@ public class HomeActivity extends Activity implements LocationListener, ReadFeed
 		mImageViewLoading = (ImageView) findViewById(R.id.imageViewLoading);
 		mButtonStart = (Button) findViewById(R.id.button_home_start);
 		mButtonReload = (Button) findViewById(R.id.button_home_reload);
-		
+
 		mButtonReload.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -88,19 +92,20 @@ public class HomeActivity extends Activity implements LocationListener, ReadFeed
 	}
 
 	private void startReadFeed() {
-		mReadFeedEvent = new ReadFeed();
-		mReadFeedEvent.setEventHandler(HomeActivity.this);
-		mReadFeedEvent.setLocation(mLocation);
-		mReadFeedEvent.execute("");
+
+			mReadFeedEvent = new ReadFeed(HomeActivity.this);
+			mReadFeedEvent.setEventHandler(HomeActivity.this);
+			mReadFeedEvent.setLocation(mLocation);
+			mReadFeedEvent.execute("");
+
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			if (!mGPSConfirmed)
-			{
+			if (!mGPSConfirmed) {
 				buildAlertMessageNoGps();
 				mGPSConfirmed = true;
 			}
@@ -110,10 +115,12 @@ public class HomeActivity extends Activity implements LocationListener, ReadFeed
 		}
 	}
 
-	/** Called when buttonStart is clicked, declared in the activity_home.xml
+	/**
+	 * Called when buttonStart is clicked, declared in the activity_home.xml
 	 * 
 	 * @param view
-	 *            Associated view of the buttonStart  */
+	 *            Associated view of the buttonStart
+	 */
 	public void onClickStart(View view) {
 		Intent intent = new Intent(HomeActivity.this, SelectEventActivity.class);
 		Bundle bundle = new Bundle();
@@ -129,17 +136,24 @@ public class HomeActivity extends Activity implements LocationListener, ReadFeed
 
 	private void buildAlertMessageNoGps() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder	.setMessage("Yout GPS seems to be disabled, do you want to enable it?")
+		builder.setMessage(
+				"Yout GPS seems to be disabled, do you want to enable it?")
 				.setCancelable(false)
-				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-					public void onClick(final DialogInterface dialog, final int id) {
-						startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1);
-					}
-				})
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(final DialogInterface dialog,
+									final int id) {
+								startActivityForResult(
+										new Intent(
+												Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+										1);
+							}
+						})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
-					public void onClick(final DialogInterface dialog, final int id) {
+					public void onClick(final DialogInterface dialog,
+							final int id) {
 						dialog.cancel();
-//						HomeActivity.this.finish();
+						// HomeActivity.this.finish();
 					}
 				});
 		final AlertDialog alert = builder.create();
@@ -189,6 +203,6 @@ public class HomeActivity extends Activity implements LocationListener, ReadFeed
 	@Override
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

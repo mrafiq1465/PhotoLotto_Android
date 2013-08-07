@@ -1,6 +1,5 @@
 package com.abir.photolotto;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +8,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 
-public class BeforeHtmlActivity extends Activity {
+public class BeforeHtmlActivity extends BaseActivity {
 	private ProgressDialog dialog;
 
 	@Override
@@ -21,16 +20,17 @@ public class BeforeHtmlActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_html);
-		
+
 		String url = "";
-		switch (this.getIntent().getIntExtra("requestCode", Utils.REQUEST_ACTIVITY_BEFORE_HTML)) {
-			case Utils.REQUEST_ACTIVITY_BEFORE_HTML :
-				url = EventModel.getSelectedEvent().getsHtmlBefore();
-				break;
-			case Utils.REQUEST_ACTIVITY_AFTER_HTML:
-				url = EventModel.getSelectedEvent().getsHtmlAfter();
-			default :
-				break;
+		switch (this.getIntent().getIntExtra("requestCode",
+				Utils.REQUEST_ACTIVITY_BEFORE_HTML)) {
+		case Utils.REQUEST_ACTIVITY_BEFORE_HTML:
+			url = EventModel.getSelectedEvent().getsHtmlBefore();
+			break;
+		case Utils.REQUEST_ACTIVITY_AFTER_HTML:
+			url = EventModel.getSelectedEvent().getsHtmlAfter();
+		default:
+			break;
 		}
 		dialog = new ProgressDialog(BeforeHtmlActivity.this);
 
@@ -38,7 +38,7 @@ public class BeforeHtmlActivity extends Activity {
 
 		webView.setWebViewClient(new WebViewClient() {
 			@Override
-			public void onPageFinished(WebView view, String url) {                  
+			public void onPageFinished(WebView view, String url) {
 				if (dialog.isShowing()) {
 					dialog.dismiss();
 				}
@@ -49,9 +49,9 @@ public class BeforeHtmlActivity extends Activity {
 		dialog.show();
 		webView.loadUrl(url);
 
-		//WebSettings webSettings = webView.getSettings();
-		//webSettings.setJavaScriptEnabled(true);
-		
+		// WebSettings webSettings = webView.getSettings();
+		// webSettings.setJavaScriptEnabled(true);
+
 		final Button buttonDone = (Button) findViewById(R.id.buttonDoneHtml);
 		buttonDone.setOnClickListener(new OnClickListener() {
 			@Override

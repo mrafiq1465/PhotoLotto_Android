@@ -1,6 +1,5 @@
 package com.android.facebook;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,13 +7,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.abir.photolotto.BaseActivity;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
-public class FacebookActivity extends Activity implements OnClickListener{
+public class FacebookActivity extends BaseActivity implements OnClickListener{
 	
 	private static final String TAG = "FacebookActivity";
 	// Instance of Facebook Class

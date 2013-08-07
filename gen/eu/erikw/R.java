@@ -8,19 +8,19 @@ package eu.erikw;
 
 public final class R {
 	public static final class id {
-		public static final int ptr_id_header = 0x7f080046;
-		public static final int ptr_id_image = 0x7f080047;
-		public static final int ptr_id_textwrapper = 0x7f080049;
-		public static final int ptr_id_spinner = 0x7f080048;
-		public static final int ptr_id_last_updated = 0x7f08004b;
-		public static final int ptr_id_text = 0x7f08004a;
+		public static final int ptr_id_header = 0x7f08004b;
+		public static final int ptr_id_image = 0x7f08004c;
+		public static final int ptr_id_textwrapper = 0x7f08004e;
+		public static final int ptr_id_spinner = 0x7f08004d;
+		public static final int ptr_id_last_updated = 0x7f080050;
+		public static final int ptr_id_text = 0x7f08004f;
 	}
 	public static final class style {
 		public static final int ptr_header = 0x7f040001;
-		public static final int ptr_spinner = 0x7f040003;
 		public static final int ptr_textwrapper = 0x7f040004;
-		public static final int ptr_last_updated = 0x7f040006;
+		public static final int ptr_spinner = 0x7f040003;
 		public static final int ptr_headerContainer = 0x7f040000;
+		public static final int ptr_last_updated = 0x7f040006;
 		public static final int ptr_text = 0x7f040005;
 		public static final int ptr_arrow = 0x7f040002;
 	}
@@ -31,9 +31,9 @@ public final class R {
 		public static final int ptr_pull_to_refresh = 0x7f050000;
 	}
 	public static final class layout {
-		public static final int ptr_header = 0x7f03000f;
+		public static final int ptr_header = 0x7f030010;
 	}
 	public static final class drawable {
-		public static final int ptr_pulltorefresh_arrow = 0x7f02001b;
+		public static final int ptr_pulltorefresh_arrow = 0x7f02001d;
 	}
 }

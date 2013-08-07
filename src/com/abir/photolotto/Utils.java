@@ -2,13 +2,11 @@ package com.abir.photolotto;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.io.StreamCorruptedException;
@@ -20,7 +18,9 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Random;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
@@ -35,6 +35,8 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.util.TypedValue;
 
@@ -77,7 +79,7 @@ public class Utils {
 		File fileImage = null;
 		try {
 			File storagePath = new File(
-					Environment.getExternalStorageDirectory(), "PhotoLotto");
+					Environment.getExternalStorageDirectory(), "PIXTA");
 			storagePath.mkdirs();
 			String sFileName = Utils.generateUniqueName() + ".jpg";
 			fileImage = new File(storagePath, sFileName);
@@ -842,4 +844,29 @@ public class Utils {
 		
 		return bitmap;
 	}
+	public static boolean isOnline(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			return true;
+		}
+		return false;
+	}
+
+	public static void showNetworkAlert(Context context) {
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("Network Alert");
+		builder.setMessage("Please enable your network connection..");
+		builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.show();
+	}
+
 }

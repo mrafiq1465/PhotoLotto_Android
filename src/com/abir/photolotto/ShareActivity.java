@@ -38,66 +38,73 @@ import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
-public class ShareActivity extends Activity {
+public class ShareActivity extends BaseActivity {
 
-	private AmazonS3Client		s3Client		= new AmazonS3Client(new BasicAWSCredentials(Constants.ACCESS_KEY_ID, Constants.SECRET_KEY));
-	private int					nSelectedIndex	= -1;
-	private Facebook			facebook;
-	private AsyncFacebookRunner	mAsyncRunner;
-	private SharedPreferences	mPrefs;
-	private static final String	APP_ID			= "469543539748993";
-	private static final String	TAG				= "ShareActivity";
+	private AmazonS3Client s3Client = new AmazonS3Client(
+			new BasicAWSCredentials(Constants.ACCESS_KEY_ID,
+					Constants.SECRET_KEY));
+	private int nSelectedIndex = -1;
+	private Facebook facebook;
+	private AsyncFacebookRunner mAsyncRunner;
+	private SharedPreferences mPrefs;
+	private static final String APP_ID = "469543539748993";
+	private static final String TAG = "ShareActivity";
 
 	private void completeAction(int n) {
 
 		switch (n) {
-			case 0 :
-				loginToFacebook();
-				break;
-			case 1 :
-				Intent i = new Intent(ShareActivity.this, TwitterActivity.class);
-				startActivityForResult(i, Utils.REQUEST_ACTIVITY_TWITTER);
-				break;
-			case 2:
-				galleryAddPic(Utils.getFileFromBitmap(SharedImageObjects.mBitmapWithEffect));
-				Toast.makeText(ShareActivity.this, "Photo saved in gallery", Toast.LENGTH_SHORT).show();
-				postHtmlActivity();
-				break;
-			case 3:
-			{
-				Intent intent = new Intent(ShareActivity.this, EmailActivity.class);
-				startActivityForResult(intent, Utils.REQUEST_ACTIVITY_EMAIL);
-			}
+		case 0:
+			loginToFacebook();
 			break;
-			case 4:
-			{
-				CInstagram.setActivity(this);
-				if(CInstagram.isInstagramInstalled()){
-					CInstagram.shareInstagram(
-							Uri.fromFile(Utils.getFileFromBitmap(SharedImageObjects.mBitmapWithEffect))
-							);
-				} else {
-					new AlertDialog.Builder(this)
-				    .setTitle("Instagram not found")
-				    .setCancelable(false)
-				    .setMessage("You will need to install the Instagram app to share this image, please download it from GooglePlay")
-				    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				        public void onClick(DialogInterface dialog, int which) { 
-				        	postHtmlActivity();
-				        }
-				     })
-				    /*.setNegativeButton("No", new DialogInterface.OnClickListener() {
-				        public void onClick(DialogInterface dialog, int which) { 
-				            // do nothing
-				        }
-				     })*/
-				     .show();
-					//Toast.makeText(ShareActivity.this, "Instagram not installed", Toast.LENGTH_SHORT).show();
-				}
+		case 1:
+			Intent i = new Intent(ShareActivity.this, TwitterActivity.class);
+			startActivityForResult(i, Utils.REQUEST_ACTIVITY_TWITTER);
+			break;
+		case 2:
+			galleryAddPic(Utils
+					.getFileFromBitmap(SharedImageObjects.mBitmapWithEffect));
+			Toast.makeText(ShareActivity.this, "Photo saved in gallery",
+					Toast.LENGTH_SHORT).show();
+			postHtmlActivity();
+			break;
+		case 3: {
+			Intent intent = new Intent(ShareActivity.this, EmailActivity.class);
+			startActivityForResult(intent, Utils.REQUEST_ACTIVITY_EMAIL);
+		}
+			break;
+		case 4: {
+			CInstagram.setActivity(this);
+			if (CInstagram.isInstagramInstalled()) {
+				CInstagram
+						.shareInstagram(Uri.fromFile(Utils
+								.getFileFromBitmap(SharedImageObjects.mBitmapWithEffect)));
+			} else {
+				new AlertDialog.Builder(this)
+						.setTitle("Instagram not found")
+						.setCancelable(false)
+						.setMessage(
+								"You will need to install the Instagram app to share this image, please download it from GooglePlay")
+						.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int which) {
+										postHtmlActivity();
+									}
+								})
+						/*
+						 * .setNegativeButton("No", new
+						 * DialogInterface.OnClickListener() { public void
+						 * onClick(DialogInterface dialog, int which) { // do
+						 * nothing } })
+						 */
+						.show();
+				// Toast.makeText(ShareActivity.this, "Instagram not installed",
+				// Toast.LENGTH_SHORT).show();
 			}
-				break;
-			default :
-				break;
+		}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -115,34 +122,44 @@ public class ShareActivity extends Activity {
 			facebook.setAccessExpires(expires);
 		}
 		if (!facebook.isSessionValid()) {
-			facebook.authorize(this, new String[]{"email", "publish_stream"}, new DialogListener() {
-				@Override
-				public void onCancel() {
-					// Returns back to the screen it was launched
-				}
+			facebook.authorize(this,
+					new String[] { "email", "publish_stream" },
+					new DialogListener() {
+						@Override
+						public void onCancel() {
+							// Returns back to the screen it was launched
+						}
 
-				@Override
-				public void onComplete(Bundle values) {
-					SharedPreferences.Editor editor = mPrefs.edit();
-					editor.putString("access_token", facebook.getAccessToken());
-					editor.putLong("access_expires", facebook.getAccessExpires());
-					editor.commit();
-					publishPhoto();
-				}
+						@Override
+						public void onComplete(Bundle values) {
+							SharedPreferences.Editor editor = mPrefs.edit();
+							editor.putString("access_token",
+									facebook.getAccessToken());
+							editor.putLong("access_expires",
+									facebook.getAccessExpires());
+							editor.commit();
+							publishPhoto();
+						}
 
-				@Override
-				public void onError(DialogError error) {
-					Toast.makeText(ShareActivity.this, "An unknown error has occured, please try again!", Toast.LENGTH_LONG).show();
-					Log.i(TAG, "Facebook error occured on PIXTA end");
+						@Override
+						public void onError(DialogError error) {
+							Toast.makeText(
+									ShareActivity.this,
+									"An unknown error has occured, please try again!",
+									Toast.LENGTH_LONG).show();
+							Log.i(TAG, "Facebook error occured on PIXTA end");
 
-				}
+						}
 
-				@Override
-				public void onFacebookError(FacebookError e) {
-					Toast.makeText(ShareActivity.this, "An unknown error has occured, please try again!", Toast.LENGTH_LONG).show();
-					Log.i(TAG, "Facebook error occured on Facebook end");
-				}
-			});
+						@Override
+						public void onFacebookError(FacebookError e) {
+							Toast.makeText(
+									ShareActivity.this,
+									"An unknown error has occured, please try again!",
+									Toast.LENGTH_LONG).show();
+							Log.i(TAG, "Facebook error occured on Facebook end");
+						}
+					});
 			facebook.setAccessToken(access_token);
 		} else {
 			publishPhoto();
@@ -161,16 +178,20 @@ public class ShareActivity extends Activity {
 
 			Bundle params = new Bundle();
 			params.putString(Facebook.TOKEN, facebook.getAccessToken());
-			params.putString("message", EventModel.getSelectedEvent().getsFacebookMessage());
+			params.putString("message", EventModel.getSelectedEvent()
+					.getsFacebookMessage());
 			params.putString("filename", "fb");
 			params.putByteArray("picture", data);
-			params.putString("caption", EventModel.getSelectedEvent().getsFacebookMessage());
+			params.putString("caption", EventModel.getSelectedEvent()
+					.getsFacebookMessage());
 
 			AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
-			mAsyncRunner.request("me/photos", params, "POST", new SampleUploadListener(), null);
+			mAsyncRunner.request("me/photos", params, "POST",
+					new SampleUploadListener(), null);
 			mAsyncRunner.request(response, new SampleUploadListener());
 			Log.e("post result", response);
-			Toast.makeText(this, "Posted Successfully", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Posted Successfully", Toast.LENGTH_LONG)
+					.show();
 		} catch (Exception e) {
 			Toast.makeText(this, "Posting Failed", Toast.LENGTH_LONG).show();
 			e.printStackTrace();
@@ -185,7 +206,8 @@ public class ShareActivity extends Activity {
 
 	public void postHtmlActivity() {
 		if (!EventModel.getSelectedEvent().getsHtmlAfter().isEmpty()) {
-			Intent intent = new Intent(ShareActivity.this, BeforeHtmlActivity.class);
+			Intent intent = new Intent(ShareActivity.this,
+					BeforeHtmlActivity.class);
 			intent.putExtra("requestCode", Utils.REQUEST_ACTIVITY_AFTER_HTML);
 			startActivityForResult(intent, Utils.REQUEST_ACTIVITY_AFTER_HTML);
 		}
@@ -194,43 +216,44 @@ public class ShareActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-			case Utils.REQUEST_ACTIVITY_BEFORE_HTML :
-				completeAction(nSelectedIndex);
+		case Utils.REQUEST_ACTIVITY_BEFORE_HTML:
+			completeAction(nSelectedIndex);
+			break;
+		case Utils.REQUEST_ACTIVITY_AFTER_HTML: {
+			switch (resultCode) {
+			case Utils.REQUEST_ACTIVITY_DONE:
+				finish();
 				break;
-			case Utils.REQUEST_ACTIVITY_AFTER_HTML : {
-				switch (resultCode) {
-					case Utils.REQUEST_ACTIVITY_DONE :
-						finish();
-						break;
 
-					default :
-						break;
-				}
+			default:
 				break;
 			}
-			case Utils.REQUEST_ACTIVITY_EMAIL :
-			case Utils.REQUEST_ACTIVITY_TWITTER :
-			case Utils.REQUEST_ACTIVITY_INSTAGRAM :
-				postHtmlActivity();
-				break;
-			default :
-				break;
+			break;
+		}
+		case Utils.REQUEST_ACTIVITY_EMAIL:
+		case Utils.REQUEST_ACTIVITY_TWITTER:
+		case Utils.REQUEST_ACTIVITY_INSTAGRAM:
+			postHtmlActivity();
+			break;
+		default:
+			break;
 		}
 	}
 
 	private void showCustomDialog() {
-		View dialogView = getLayoutInflater().inflate(R.layout.custom_share_dialog, null);
+		View dialogView = getLayoutInflater().inflate(
+				R.layout.custom_share_dialog, null);
 		final AlertDialog alert = new AlertDialog.Builder(ShareActivity.this)
-									.setView(dialogView)
-									.setCancelable(true)
-									.create();
+				.setView(dialogView).setCancelable(true).create();
 
-		TextView textViewTerms = (TextView) dialogView.findViewById(R.id.textViewTerms);
+		TextView textViewTerms = (TextView) dialogView
+				.findViewById(R.id.textViewTerms);
 		textViewTerms.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(ShareActivity.this, TermsConditionsActivity.class);
+				Intent intent = new Intent(ShareActivity.this,
+						TermsConditionsActivity.class);
 				startActivity(intent);
 			}
 		});
@@ -242,16 +265,20 @@ public class ShareActivity extends Activity {
 			public void onClick(View arg0) {
 				alert.dismiss();
 				if (!EventModel.getSelectedEvent().getsHtmlBefore().isEmpty()) {
-					Intent intent = new Intent(ShareActivity.this, BeforeHtmlActivity.class);
-					intent.putExtra("requestCode", Utils.REQUEST_ACTIVITY_BEFORE_HTML);
-					startActivityForResult(intent, Utils.REQUEST_ACTIVITY_BEFORE_HTML);
+					Intent intent = new Intent(ShareActivity.this,
+							BeforeHtmlActivity.class);
+					intent.putExtra("requestCode",
+							Utils.REQUEST_ACTIVITY_BEFORE_HTML);
+					startActivityForResult(intent,
+							Utils.REQUEST_ACTIVITY_BEFORE_HTML);
 				} else {
 					completeAction(nSelectedIndex);
 				}
 			}
 		});
 
-		Button buttonCancel = (Button) dialogView.findViewById(R.id.buttonTermsCancel);
+		Button buttonCancel = (Button) dialogView
+				.findViewById(R.id.buttonTermsCancel);
 		buttonCancel.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -270,7 +297,8 @@ public class ShareActivity extends Activity {
 		new S3PutObjectTask().execute("");
 
 		setContentView(R.layout.activity_share);
-		List<String> strings = Arrays.asList(new String[]{"facebook", "twitter", "album", "email"/*, "instagram"*/});
+		List<String> strings = Arrays.asList(new String[] { "facebook",
+				"twitter", "album", "email"/* , "instagram" */});
 		ListView listView = (ListView) findViewById(R.id.listViewShareList);
 		ArrayAdapter<String> arrayAdapter = new ShareAdapter(this, strings);
 		listView.setAdapter(arrayAdapter);
@@ -283,7 +311,8 @@ public class ShareActivity extends Activity {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				nSelectedIndex = position;
 				showCustomDialog();
 			}
@@ -301,13 +330,14 @@ public class ShareActivity extends Activity {
 				onBackPressed();
 			}
 		});
-		
+
 		final Button buttonDone = (Button) findViewById(R.id.buttonShareDone);
 		buttonDone.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(ShareActivity.this, SelectEventActivity.class);
+				Intent intent = new Intent(ShareActivity.this,
+						SelectEventActivity.class);
 				startActivity(intent);
 				finish();
 			}
@@ -316,15 +346,16 @@ public class ShareActivity extends Activity {
 
 	private void galleryAddPic(File f) {
 
-		Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+		Intent mediaScanIntent = new Intent(
+				Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 		Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		this.sendBroadcast(mediaScanIntent);
 	}
 
 	private class S3TaskResult {
-		String	errorMessage	= null;
-		Uri		uri				= null;
+		String errorMessage = null;
+		Uri uri = null;
 
 		public String getErrorMessage() {
 			return errorMessage;
@@ -355,11 +386,16 @@ public class ShareActivity extends Activity {
 			// Put the image data into S3.
 			try {
 
-				File file = Utils.getFileFromBitmap(SharedImageObjects.mBitmapWithEffect);
+				File file = Utils
+						.getFileFromBitmap(SharedImageObjects.mBitmapWithEffect);
+				
 				// s3Client.createBucket(Constants.getPictureBucket());
 				// Content type is determined by file extension.
 				SharedImageObjects.mKey = file.getName();
-				PutObjectRequest por = new PutObjectRequest(Constants.getPictureBucket(), SharedImageObjects.mKey, file);
+			
+				PutObjectRequest por = new PutObjectRequest(
+						Constants.getPictureBucket(), SharedImageObjects.mKey,
+						file);
 				s3Client.putObject(por);
 				file.delete();
 			} catch (Exception exception) {
@@ -369,18 +405,19 @@ public class ShareActivity extends Activity {
 		}
 
 		protected void onPostExecute(S3TaskResult result) {
-			String sResult = result.getErrorMessage() == null ? "Uploaded successfully in S3" : result.getErrorMessage();
+			String sResult = result.getErrorMessage() == null ? "Uploaded successfully in S3"
+					: result.getErrorMessage();
 			Log.d("PIXTA", sResult);
 		}
 	}
 }
 
 class ShareAdapter extends ArrayAdapter<String> {
-	private List<String>	mListItems;
-	private Activity		mContext;
+	private List<String> mListItems;
+	private Activity mContext;
 
 	static class ViewHolder {
-		public ImageView	imageViewMedia;
+		public ImageView imageViewMedia;
 	}
 
 	public ShareAdapter(Activity context, List<String> list) {
@@ -393,9 +430,11 @@ class ShareAdapter extends ArrayAdapter<String> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View rowView = null;
 		if (convertView == null) {
-			rowView = mContext.getLayoutInflater().inflate(R.layout.share_row_layout, null);
+			rowView = mContext.getLayoutInflater().inflate(
+					R.layout.share_row_layout, null);
 			final ViewHolder viewHolder = new ViewHolder();
-			viewHolder.imageViewMedia = (ImageView) rowView.findViewById(R.id.imageViewMedia);
+			viewHolder.imageViewMedia = (ImageView) rowView
+					.findViewById(R.id.imageViewMedia);
 			rowView.setTag(viewHolder);
 		} else {
 			rowView = convertView;
@@ -403,14 +442,18 @@ class ShareAdapter extends ArrayAdapter<String> {
 		ViewHolder holder = (ViewHolder) rowView.getTag();
 
 		if (mListItems.get(position).equalsIgnoreCase("Facebook")) {
-			holder.imageViewMedia.setBackgroundResource(R.drawable.upload_facebook);
+			holder.imageViewMedia
+					.setBackgroundResource(R.drawable.upload_facebook);
 		} else if (mListItems.get(position).equalsIgnoreCase("Twitter")) {
-			holder.imageViewMedia.setBackgroundResource(R.drawable.upload_twitter);
+			holder.imageViewMedia
+					.setBackgroundResource(R.drawable.upload_twitter);
 		} else if (mListItems.get(position).equalsIgnoreCase("instagram")) {
-			holder.imageViewMedia.setBackgroundResource(R.drawable.upload_instagram);
+			holder.imageViewMedia
+					.setBackgroundResource(R.drawable.upload_instagram);
 		} else if (mListItems.get(position).equalsIgnoreCase("email")) {
-			holder.imageViewMedia.setBackgroundResource(R.drawable.upload_email);
-		}else {
+			holder.imageViewMedia
+					.setBackgroundResource(R.drawable.upload_email);
+		} else {
 			holder.imageViewMedia.setBackgroundResource(R.drawable.upload_save);
 		}
 
