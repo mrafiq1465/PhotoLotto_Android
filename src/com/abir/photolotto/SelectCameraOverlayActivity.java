@@ -1,15 +1,18 @@
 package com.abir.photolotto;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
@@ -30,6 +33,8 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.facebook.android.Util;
 
 public class SelectCameraOverlayActivity extends BaseActivity {
 	private final String tag = SelectCameraOverlayActivity.class
@@ -96,6 +101,40 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 
 		Parameters parameters = mCamera.getParameters();
 		Camera.Size minPreviewSize = parameters.getPictureSize();
+		PackageManager pm = context.getPackageManager();
+		if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS)) {
+			List<String> supportedFocusModes = parameters
+					.getSupportedFocusModes();
+			if (supportedFocusModes
+					.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+				parameters
+						.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+			} else if (supportedFocusModes
+					.contains(Camera.Parameters.FOCUS_MODE_MACRO)) {
+				parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_MACRO);
+			} else if (supportedFocusModes
+					.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+				parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+			}
+			mCamera.setParameters(parameters);
+		} else {
+			Log.i("TAG", "Focus Mode :: Does not have autofocus.......");
+		}
+//		camera.startPreview();
+		
+		if (mCamera.getParameters().getFocusMode()
+				.equals(Camera.Parameters.FOCUS_MODE_MACRO)
+				|| mCamera.getParameters().getFocusMode()
+						.equals(Camera.Parameters.FOCUS_MODE_AUTO)) {
+			mCamera.autoFocus(new AutoFocusCallback() {
+
+				@Override
+				public void onAutoFocus(boolean success, Camera camera) {
+					Log.i("TAG", "Auto Focus Completed :: "
+							+ success);
+				}
+			});
+		}
 
 		params.width = screenWidth;
 		params.height = (int) ((float) params.width
@@ -321,22 +360,7 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 	PictureCallback cameraPictureCallbackJpeg = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			// Bitmap capturedBitmap = Utils
-			// .rotateBitmap(
-			// BitmapFactory.decodeByteArray(data, 0, data.length),
-			// SharedImageObjects.mSelectedCamera ==
-			// CameraInfo.CAMERA_FACING_BACK ? 90
-			// : 270);
-			//
-			// SharedImageObjects.mSelectedImageUrl = mListOverlayUrls
-			// .get(mSelectedImageNumber);
-			//
-			// Utils.savePicture("capturedImage.png", capturedBitmap,
-			// getBaseContext());
-			//
-			// startActivity(new Intent(SelectCameraOverlayActivity.this,
-			// ImageEffectActivity.class));
-			// finish();
+			
 			saveImage(data);
 		}
 
