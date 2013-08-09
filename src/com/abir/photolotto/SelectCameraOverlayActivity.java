@@ -34,8 +34,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.facebook.android.Util;
-
 public class SelectCameraOverlayActivity extends BaseActivity {
 	private final String tag = SelectCameraOverlayActivity.class
 			.getSimpleName();
@@ -120,8 +118,8 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 		} else {
 			Log.i("TAG", "Focus Mode :: Does not have autofocus.......");
 		}
-//		camera.startPreview();
-		
+		// camera.startPreview();
+
 		if (mCamera.getParameters().getFocusMode()
 				.equals(Camera.Parameters.FOCUS_MODE_MACRO)
 				|| mCamera.getParameters().getFocusMode()
@@ -130,8 +128,7 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 
 				@Override
 				public void onAutoFocus(boolean success, Camera camera) {
-					Log.i("TAG", "Auto Focus Completed :: "
-							+ success);
+					Log.i("TAG", "Auto Focus Completed :: " + success);
 				}
 			});
 		}
@@ -360,15 +357,15 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 	PictureCallback cameraPictureCallbackJpeg = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			
+
 			saveImage(data);
 		}
 
 	};
 
 	private void saveImage(final byte[] data) {
-		 pd = ProgressDialog.show(
-				SelectCameraOverlayActivity.this, "", "Applying effects...");
+		pd = ProgressDialog.show(SelectCameraOverlayActivity.this, "",
+				"Applying effects...");
 		pd.setCancelable(false);
 		new Thread(new Runnable() {
 
@@ -385,44 +382,50 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 
 				Utils.savePicture("capturedImage.png", capturedBitmap,
 						getBaseContext());
+//				int width = Math.min(capturedBitmap.getWidth(),
+//						capturedBitmap.getHeight());
+				// int height = width;
+				// Bitmap bitmapIn = Utils.cropAndScaleBitmap(capturedBitmap, 0,
+				// 0, width,
+				// width, 640,
+				// 640);
+				Bitmap bitmapIn = Utils.cropAndScaleBitmap(capturedBitmap, 0,
+						0, capturedBitmap.getWidth(), capturedBitmap.getWidth(), 640,
+						640);
 
-				addInfo(capturedBitmap);
+				// SharedImageObjects.mBitmap = bitmapIn;
+
+				// save as file
+				Utils.savePicture("cropedImage.png", bitmapIn, context);
+
+				// read again
+				Bitmap bitmapIn3 = null;
+				bitmapIn3 = Utils.readPicture("cropedImage.png", bitmapIn3,
+						context);
+				SharedImageListObjects.mTempImage = Utils
+						.convertToMutable(bitmapIn3);
+
+				SharedImageListObjects.mEffectImages.clear();
+				SharedImageListObjects.mEffectImages
+						.add(SharedImageListObjects.mTempImage);
+				SharedImageListObjects.mEffectImages.add(Utils
+						.hefeImage(bitmapIn));
+				SharedImageListObjects.mEffectImages.add(Utils.earlybirdImage(
+						SelectCameraOverlayActivity.this, bitmapIn));
+				SharedImageListObjects.mEffectImages.add(Utils.xProImage(
+						SelectCameraOverlayActivity.this, bitmapIn));
+				SharedImageListObjects.mEffectImages.add(Utils.inkwellImage(
+						SelectCameraOverlayActivity.this, bitmapIn));
+				SharedImageListObjects.mEffectImages.add(Utils.nashvilleImage(
+						SelectCameraOverlayActivity.this, bitmapIn));
+				pd.dismiss();
+				Intent intent = new Intent(context, SelectEffectActivity.class);
+				startActivity(intent);
+				finish();
+				// addInfo(capturedBitmap);
 			}
 		}).start();
 
 	}
 
-	protected void addInfo(Bitmap capturedBitmap) {
-		int width = Math.min(capturedBitmap.getWidth(),
-				capturedBitmap.getHeight());
-		// int height = width;
-		Bitmap bitmapIn = Utils.cropAndScaleBitmap(capturedBitmap, 0, 0, width,
-				width, 640, 640);
-		// SharedImageObjects.mBitmap = bitmapIn;
-
-		// save as file
-		Utils.savePicture("cropedImage.png", bitmapIn, context);
-
-		// read again
-		Bitmap bitmapIn3 = null;
-		bitmapIn3 = Utils.readPicture("cropedImage.png", bitmapIn3, context);
-		SharedImageListObjects.mTempImage = Utils.convertToMutable(bitmapIn3);
-
-		SharedImageListObjects.mEffectImages.clear();
-		SharedImageListObjects.mEffectImages
-				.add(SharedImageListObjects.mTempImage);
-		SharedImageListObjects.mEffectImages.add(Utils.hefeImage(bitmapIn));
-		SharedImageListObjects.mEffectImages.add(Utils.earlybirdImage(
-				SelectCameraOverlayActivity.this, bitmapIn));
-		SharedImageListObjects.mEffectImages.add(Utils.xProImage(
-				SelectCameraOverlayActivity.this, bitmapIn));
-		SharedImageListObjects.mEffectImages.add(Utils.inkwellImage(
-				SelectCameraOverlayActivity.this, bitmapIn));
-		SharedImageListObjects.mEffectImages.add(Utils.nashvilleImage(
-				SelectCameraOverlayActivity.this, bitmapIn));
-		pd.dismiss();
-		Intent intent = new Intent(context, SelectEffectActivity.class);
-		startActivity(intent);
-		finish();
-	}
 }

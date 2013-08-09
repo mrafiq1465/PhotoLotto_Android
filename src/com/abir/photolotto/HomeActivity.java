@@ -51,11 +51,11 @@ public class HomeActivity extends BaseActivity implements LocationListener,
 
 	@Override
 	protected void onDestroy() {
-		AnimationDrawable frameAnimation = (AnimationDrawable) mImageViewAnimation
-				.getBackground();
-		frameAnimation.stop();
-		mImageViewAnimation.setBackgroundResource(R.drawable.image_home);
-		mImageViewAnimation = null;
+//		AnimationDrawable frameAnimation = (AnimationDrawable) mImageViewAnimation
+//				.getBackground();
+//		frameAnimation.stop();
+//		mImageViewAnimation.setBackgroundResource(R.drawable.image_home);
+//		mImageViewAnimation = null;
 		super.onDestroy();
 	}
 
