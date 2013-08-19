@@ -44,16 +44,15 @@ public class Utils {
 
 	private static Bitmap inkwellMap = null;
 	private static Bitmap nashvilleMap = null;
-	
+
 	public final static int REQUEST_ACTIVITY_TWITTER = 5000;
 	public final static int REQUEST_ACTIVITY_INSTAGRAM = 5001;
 	public final static int REQUEST_ACTIVITY_BEFORE_HTML = 5002;
 	public final static int REQUEST_ACTIVITY_AFTER_HTML = 5003;
 	public final static int REQUEST_ACTIVITY_EMAIL = 5004;
-	public final static int	REQUEST_ACTIVITY_DONE = 5005;
-	public final static int	REQUEST_ACTIVITY_SHARE = 5006;
-	
-	
+	public final static int REQUEST_ACTIVITY_DONE = 5005;
+	public final static int REQUEST_ACTIVITY_SHARE = 5006;
+
 	public static void copyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
 		try {
@@ -98,13 +97,37 @@ public class Utils {
 	}
 
 	public static Bitmap rotateBitmap(Bitmap src, float degree) {
-		// create new matrix
 		Matrix matrix = new Matrix();
 		// setup rotation degree
 		matrix.postRotate(degree);
 		return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(),
 				matrix, true);
+
 	}
+
+	// public static Bitmap rotateBitmap(byte[] data, Bitmap src1, float degree)
+	// {
+	// // create new matrix
+	// Matrix matrix = new Matrix();
+	// // setup rotation degree
+	// matrix.postRotate(degree);
+	// // return Bitmap.createBitmap(src, 0, 0, src.getWidth(),
+	// // src.getHeight(),
+	// // matrix, true);
+	// final BitmapFactory.Options options = new BitmapFactory.Options();
+	// options.inJustDecodeBounds = true;
+	// BitmapFactory.decodeByteArray(data, 0, data.length, options);
+	//
+	// // Calculate inSampleSize
+	// options.inSampleSize = calculateInSampleSize(options, 640, 640);
+	//
+	// // Decode bitmap with inSampleSize set
+	// options.inJustDecodeBounds = false;
+	// Bitmap src = BitmapFactory.decodeByteArray(data, 0, data.length,
+	// options);
+	// return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(),
+	// matrix, true);
+	// }
 
 	public static Bitmap convertToMutable(Bitmap imgIn) {
 		try {
@@ -404,7 +427,7 @@ public class Utils {
 		// Bitmap roundedBitmap = getRoundedCornerBitmap(newBitmap);
 		return newBitmap;
 	}
-	
+
 	// for earlybird filter
 	public static Bitmap xProImage(Context context, Bitmap src) {
 		Bitmap boostBitmapTwo = doGamma(src, 0.84, 0.78, 0.68);
@@ -629,21 +652,22 @@ public class Utils {
 		// return final image
 		return bmOut;
 	}
-	
-	//Map PNG Loader
+
+	// Map PNG Loader
 	public static void loadMaps(Context context) {
 		try {
-			if (inkwellMap == null)
-			{
-				InputStream inInkwellMap = context.getAssets().open("inkwellmap.png");
+			if (inkwellMap == null) {
+				InputStream inInkwellMap = context.getAssets().open(
+						"inkwellmap.png");
 				BufferedInputStream buf1 = new BufferedInputStream(inInkwellMap);
 				inkwellMap = BitmapFactory.decodeStream(buf1);
 			}
-			
-			if (nashvilleMap == null)
-			{
-				InputStream inNashvilleMap = context.getAssets().open("nashvillemap.png");
-				BufferedInputStream buf2 = new BufferedInputStream(inNashvilleMap);
+
+			if (nashvilleMap == null) {
+				InputStream inNashvilleMap = context.getAssets().open(
+						"nashvillemap.png");
+				BufferedInputStream buf2 = new BufferedInputStream(
+						inNashvilleMap);
 				nashvilleMap = BitmapFactory.decodeStream(buf2);
 			}
 		} catch (IOException e) {
@@ -651,29 +675,29 @@ public class Utils {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static int myRound(double dValue) {
 		boolean isNagative = false;
 		if (dValue < 0) {
 			dValue = -dValue;
 			isNagative = true;
 		}
-		
-		int ret = (int)dValue;
-		double d = dValue - (double)ret;
+
+		int ret = (int) dValue;
+		double d = dValue - (double) ret;
 		if (d >= 0.5)
 			ret = ret + 1;
-		
+
 		if (isNagative)
 			ret = -ret;
-		
+
 		return ret;
 	}
-	
-	//NashvilleShader
+
+	// NashvilleShader
 	public static Bitmap nashvilleImage(Context context, Bitmap src) {
 		Utils.loadMaps(context);
-		
+
 		// image size
 		int width = src.getWidth();
 		int height = src.getHeight();
@@ -682,37 +706,43 @@ public class Utils {
 		// color information
 		int RR, GG, BB;
 		int newRR, newGG, newBB;
-		
+
 		int pixel;
 		int refPixel;
-		
+
 		int mapWidth = Utils.nashvilleMap.getWidth();
 		int xx;
-		
+
 		// scan through all pixels
-		for(int x = 0; x < width; ++x) {
-			for(int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			for (int y = 0; y < height; ++y) {
 				// get pixel color
 				pixel = src.getPixel(x, y);
 				RR = Color.red(pixel);
 				GG = Color.green(pixel);
 				BB = Color.blue(pixel);
 
-				xx = myRound((double)(mapWidth * RR) / 255.0);
-				if (xx >= mapWidth - 1)					xx = mapWidth - 1;
-				refPixel = Utils.nashvilleMap.getPixel(xx, 0/*mapHeight / 6*/);
+				xx = myRound((double) (mapWidth * RR) / 255.0);
+				if (xx >= mapWidth - 1)
+					xx = mapWidth - 1;
+				refPixel = Utils.nashvilleMap
+						.getPixel(xx, 0/* mapHeight / 6 */);
 				newRR = Color.red(refPixel);
-				
-				xx = myRound((double)(mapWidth * GG) / 255.0);
-				if (xx >= mapWidth - 1)					xx = mapWidth - 1;
-				refPixel = Utils.nashvilleMap.getPixel(xx, 1/*mapHeight / 2*/);
+
+				xx = myRound((double) (mapWidth * GG) / 255.0);
+				if (xx >= mapWidth - 1)
+					xx = mapWidth - 1;
+				refPixel = Utils.nashvilleMap
+						.getPixel(xx, 1/* mapHeight / 2 */);
 				newGG = Color.green(refPixel);
-				
-				xx = myRound((double)(mapWidth * BB) / 255.0);
-				if (xx >= mapWidth - 1)					xx = mapWidth - 1;
-				refPixel = Utils.nashvilleMap.getPixel(xx, 2/*mapHeight * 5 / 6*/);
+
+				xx = myRound((double) (mapWidth * BB) / 255.0);
+				if (xx >= mapWidth - 1)
+					xx = mapWidth - 1;
+				refPixel = Utils.nashvilleMap
+						.getPixel(xx, 2/* mapHeight * 5 / 6 */);
 				newBB = Color.blue(refPixel);
-				
+
 				// apply new pixel color to output bitmap
 				bmOut.setPixel(x, y, Color.argb(255, newRR, newGG, newBB));
 			}
@@ -720,12 +750,12 @@ public class Utils {
 
 		// return final image
 		return bmOut;
-	}	
-	
-	//NashvilleShader
+	}
+
+	// NashvilleShader
 	public static Bitmap inkwellImage(Context context, Bitmap src) {
 		Utils.loadMaps(context);
-		
+
 		// image size
 		int width = src.getWidth();
 		int height = src.getHeight();
@@ -734,16 +764,16 @@ public class Utils {
 		// color information
 		int RR, GG, BB;
 		int newRR;
-		
+
 		int pixel;
 		int refPixel;
-		
+
 		int mapWidth = Utils.inkwellMap.getWidth();
 		int xx;
-		
+
 		// scan through all pixels
-		for(int x = 0; x < width; ++x) {
-			for(int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			for (int y = 0; y < height; ++y) {
 				// get pixel color
 				pixel = src.getPixel(x, y);
 				RR = Color.red(pixel);
@@ -751,11 +781,12 @@ public class Utils {
 				BB = Color.blue(pixel);
 
 				xx = myRound(RR * 0.3 + GG * 0.6 + BB * 0.1);
-				if (xx >= mapWidth - 1)					xx = mapWidth - 1;
-				
-				refPixel = Utils.inkwellMap.getPixel(xx, 0/*mapHeight / 6*/);
+				if (xx >= mapWidth - 1)
+					xx = mapWidth - 1;
+
+				refPixel = Utils.inkwellMap.getPixel(xx, 0/* mapHeight / 6 */);
 				newRR = Color.red(refPixel);
-				
+
 				// apply new pixel color to output bitmap
 				bmOut.setPixel(x, y, Color.argb(255, newRR, newRR, newRR));
 			}
@@ -764,51 +795,44 @@ public class Utils {
 		// return final image
 		return bmOut;
 	}
-	
-	public static void saveBitmapToFileCache(Bitmap bitmap, String strFilePath)
-	{
-		File fileCacheItem  = new File(strFilePath);
+
+	public static void saveBitmapToFileCache(Bitmap bitmap, String strFilePath) {
+		File fileCacheItem = new File(strFilePath);
 		OutputStream out = null;
-		try
-		{
+		try {
 			fileCacheItem.createNewFile();
 			out = new FileOutputStream(fileCacheItem);
 			bitmap.compress(CompressFormat.JPEG, 100, out);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		finally
-		{
-			try
-			{
+
+		finally {
+			try {
 				out.flush();
 				out.close();
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	public static Bitmap cropAndScaleBitmap(Bitmap bitmap, int x, int y, int width, int height, int targetWidth, int targetHeight)
-	{
+
+	public static Bitmap cropAndScaleBitmap(Bitmap bitmap, int x, int y,
+			int width, int height, int targetWidth, int targetHeight) {
 		Bitmap cropedBitmap = Bitmap.createBitmap(bitmap, x, y, width, height);
-		Bitmap scaledBitmap = Bitmap.createScaledBitmap(cropedBitmap, targetWidth, targetHeight, true);
+		Bitmap scaledBitmap = Bitmap.createScaledBitmap(cropedBitmap,
+				targetWidth, targetHeight, true);
 		return scaledBitmap;
 	}
-	
-	public static boolean savePicture(String fileName, Bitmap bitmap, Context ctx)
-	{
+
+	public static boolean savePicture(String fileName, Bitmap bitmap,
+			Context ctx) {
 		File cDir = ctx.getCacheDir();
 		File file = new File(cDir.getPath() + "/" + fileName);
 		if (file.exists())
 			file.delete();
-		
-		try {			
+
+		try {
 			FileOutputStream out = new FileOutputStream(file);
 			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
 
@@ -818,20 +842,18 @@ public class Utils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return true;
 	}
-	
-	public static Bitmap readPicture(String fileName, Bitmap bitmap, Context ctx)
-	{
+
+	public static Bitmap readPicture(String fileName, Bitmap bitmap, Context ctx) {
 		File cDir = ctx.getCacheDir();
 		File file = new File(cDir.getPath() + "/" + fileName);
-		if (!file.exists())
-		{
+		if (!file.exists()) {
 			bitmap = null;
 			return null;
 		}
-		
+
 		try {
 			FileInputStream in = new FileInputStream(file);
 			bitmap = BitmapFactory.decodeStream(in);
@@ -841,9 +863,10 @@ public class Utils {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		return bitmap;
 	}
+
 	public static boolean isOnline(Context context) {
 		ConnectivityManager cm = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -855,7 +878,7 @@ public class Utils {
 	}
 
 	public static void showNetworkAlert(Context context) {
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Network Alert");
 		builder.setMessage("Please enable your network connection..");

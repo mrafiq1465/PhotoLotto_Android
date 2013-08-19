@@ -3,7 +3,6 @@ package com.abir.photolotto;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.net.URLEncoder;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -15,9 +14,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.abir.photolotto.database.DatabaseConstants;
 import com.abir.photolotto.database.DatabaseHandler;

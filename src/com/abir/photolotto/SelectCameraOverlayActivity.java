@@ -1,5 +1,10 @@
 package com.abir.photolotto;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,9 +55,19 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 	private Context context;
 	private ProgressDialog pd;
 
+//	static {
+//		System.loadLibrary("JniTest");
+//	}
+
+//	public native Bitmap rotateBitmapCcw90(Bitmap bitmap);
+//
+//	public native Bitmap rotateBitmapcw90(Bitmap bitmap);
+
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+		// startActivity(new Intent(SelectCameraOverlayActivity.this,
+		// SelectEventActivity.class));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -255,14 +270,74 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 			}
 		});
 
+		mFrameLayoutPreview.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				boolean isAutoFocusSupport = getPackageManager()
+						.hasSystemFeature("android.hardware.camera.autofocus");
+				if (isAutoFocusSupport) {
+
+					mCamera.getParameters().setFocusMode("macro");
+					mCamera.autoFocus(new AutoFocusCallback() {
+						@Override
+						public void onAutoFocus(boolean success, Camera camera) {
+
+						}
+					});
+				}
+			}
+		});
 		final Button buttonCapture = (Button) findViewById(R.id.buttonCapture);
 		buttonCapture.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View view) {
-				if (mCamera != null)
-					mCamera.takePicture(cameraShutterCallback,
-							cameraPictureCallbackRaw, cameraPictureCallbackJpeg);
+				if (mCamera != null) {
+					// AutoFocusManager afm = new AutoFocusManager(context,
+					// mCamera);
+					// afm.onAutoFocus(success, theCamera)
+
+					boolean isAutoFocusSupport = getPackageManager()
+							.hasSystemFeature(
+									"android.hardware.camera.autofocus");
+					if (isAutoFocusSupport) {
+						// Camera.AutoFocusMoveCallback
+						// mCamera.setParameters("macro");
+						mCamera.getParameters().setFocusMode("macro");
+						mCamera.autoFocus(new AutoFocusCallback() {
+							@Override
+							public void onAutoFocus(boolean success,
+									Camera camera) {
+								if (success) {
+									camera.takePicture(cameraShutterCallback,
+											cameraPictureCallbackRaw,
+											cameraPictureCallbackJpeg);
+								} else {
+									mCamera.takePicture(cameraShutterCallback,
+											cameraPictureCallbackRaw,
+											cameraPictureCallbackJpeg);
+								}
+							}
+						});
+					} else {
+						mCamera.takePicture(cameraShutterCallback,
+								cameraPictureCallbackRaw,
+								cameraPictureCallbackJpeg);
+					}
+					// mCamera.setAutoFocusMoveCallback(new
+					// AutoFocusMoveCallback() {
+					//
+					// @Override
+					// public void onAutoFocusMoving(boolean start,
+					// Camera camera) {
+					// camera.takePicture(cameraShutterCallback,
+					// cameraPictureCallbackRaw,
+					// cameraPictureCallbackJpeg);
+					// }
+					// });
+
+				}
 			}
 		});
 
@@ -354,16 +429,39 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 		}
 	};
 
+	protected void onResume() {
+		super.onResume();
+		// if (SharedImageListObjects.mTempImage != null) {
+		// SharedImageListObjects.mTempImage.recycle();
+		// SharedImageListObjects.mEffectImages.clear();
+		// }
+
+	};
+
 	PictureCallback cameraPictureCallbackJpeg = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
+			Bitmap original = BitmapFactory.decodeByteArray(data, 0,
+					data.length);
+			// Bitmap resized = Bitmap.createScaledBitmap(original, PHOTO_WIDTH,
+			// PHOTO_HEIGHT, true);
 
-			saveImage(data);
+			// ByteArrayOutputStream blob = new ByteArrayOutputStream();
+			// resized.compress(Bitmap.CompressFormat.JPEG, 100, blob);
+			data = null;
+			System.gc();
+			saveImage(original);
+
 		}
 
 	};
 
-	private void saveImage(final byte[] data) {
+	protected void onDestroy() {
+		super.onDestroy();
+		mCamera.release();
+	};
+
+	private void saveImage(final Bitmap bitmap) {
 		pd = ProgressDialog.show(SelectCameraOverlayActivity.this, "",
 				"Applying effects...");
 		pd.setCancelable(false);
@@ -372,33 +470,50 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 			@Override
 			public void run() {
 
-				Bitmap capturedBitmap = Utils.rotateBitmap(
-						BitmapFactory.decodeByteArray(data, 0, data.length),
-						SharedImageObjects.mSelectedCamera == CameraInfo.CAMERA_FACING_BACK ? 90
-								: 270);
+				Bitmap capturedBitmap = Utils
+						.rotateBitmap(
+								bitmap,
+								SharedImageObjects.mSelectedCamera == CameraInfo.CAMERA_FACING_BACK ? 90
+										: 270);
+				bitmap.recycle();
+				// Bitmap capturedBitmap = null;
+				// if (SharedImageObjects.mSelectedCamera ==
+				// CameraInfo.CAMERA_FACING_BACK) {
+				// capturedBitmap = rotateBitmapcw90(bitmap);
+				// } else {
+				// capturedBitmap = rotateBitmapCcw90(bitmap);
+				// }
 
+				// ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				// bitmap.compress(CompressFormat.PNG, 0 /*ignored for PNG*/,
+				// bos);
+				// byte[] bitmapdata = bos.toByteArray();
+				// ByteArrayInputStream bs = new
+				// ByteArrayInputStream(bitmapdata);
 				SharedImageObjects.mSelectedImageUrl = mListOverlayUrls
 						.get(mSelectedImageNumber);
 
 				Utils.savePicture("capturedImage.png", capturedBitmap,
 						getBaseContext());
-//				int width = Math.min(capturedBitmap.getWidth(),
-//						capturedBitmap.getHeight());
-				// int height = width;
-				// Bitmap bitmapIn = Utils.cropAndScaleBitmap(capturedBitmap, 0,
-				// 0, width,
-				// width, 640,
-				// 640);
+
+				int width = capturedBitmap.getWidth();
+				int height = 0;
+				if (capturedBitmap.getWidth() > 500) {
+					width = 500;
+					height = (capturedBitmap.getHeight() * 500)
+							/ capturedBitmap.getWidth();
+
+					capturedBitmap = Bitmap.createScaledBitmap(capturedBitmap,
+							width, height, true);
+
+				}
 				Bitmap bitmapIn = Utils.cropAndScaleBitmap(capturedBitmap, 0,
-						0, capturedBitmap.getWidth(), capturedBitmap.getWidth(), 640,
-						640);
-
-				// SharedImageObjects.mBitmap = bitmapIn;
-
-				// save as file
+						0, capturedBitmap.getWidth(),
+						capturedBitmap.getWidth(), 500, 500);
+				capturedBitmap.recycle();
+				System.gc();
 				Utils.savePicture("cropedImage.png", bitmapIn, context);
 
-				// read again
 				Bitmap bitmapIn3 = null;
 				bitmapIn3 = Utils.readPicture("cropedImage.png", bitmapIn3,
 						context);
@@ -410,22 +525,44 @@ public class SelectCameraOverlayActivity extends BaseActivity {
 						.add(SharedImageListObjects.mTempImage);
 				SharedImageListObjects.mEffectImages.add(Utils
 						.hefeImage(bitmapIn));
-				SharedImageListObjects.mEffectImages.add(Utils.earlybirdImage(
-						SelectCameraOverlayActivity.this, bitmapIn));
-				SharedImageListObjects.mEffectImages.add(Utils.xProImage(
-						SelectCameraOverlayActivity.this, bitmapIn));
-				SharedImageListObjects.mEffectImages.add(Utils.inkwellImage(
-						SelectCameraOverlayActivity.this, bitmapIn));
-				SharedImageListObjects.mEffectImages.add(Utils.nashvilleImage(
-						SelectCameraOverlayActivity.this, bitmapIn));
+				// SharedImageListObjects.mEffectImages.add(Utils.earlybirdImage(
+				// SelectCameraOverlayActivity.this, bitmapIn));
+				// SharedImageListObjects.mEffectImages.add(Utils.xProImage(
+				// SelectCameraOverlayActivity.this, bitmapIn));
+				// SharedImageListObjects.mEffectImages.add(Utils.inkwellImage(
+				// SelectCameraOverlayActivity.this, bitmapIn));
+				// SharedImageListObjects.mEffectImages.add(Utils.nashvilleImage(
+				// SelectCameraOverlayActivity.this, bitmapIn));
 				pd.dismiss();
 				Intent intent = new Intent(context, SelectEffectActivity.class);
 				startActivity(intent);
 				finish();
 				// addInfo(capturedBitmap);
+				System.gc();
 			}
 		}).start();
 
 	}
 
+	private Bitmap decodeFile(byte[] data) {
+		ByteArrayInputStream bs = new ByteArrayInputStream(data);
+		// Decode image size
+		BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(bs, null, o);
+
+		// The new size we want to scale to
+		final int REQUIRED_SIZE = 500;
+
+		// Find the correct scale value. It should be the power of 2.
+		int scale = 1;
+		while (o.outWidth / scale / 2 >= REQUIRED_SIZE
+				&& o.outHeight / scale / 2 >= REQUIRED_SIZE)
+			scale *= 2;
+
+		// Decode with inSampleSize
+		BitmapFactory.Options o2 = new BitmapFactory.Options();
+		o2.inSampleSize = scale;
+		return BitmapFactory.decodeStream(bs, null, o2);
+	}
 }

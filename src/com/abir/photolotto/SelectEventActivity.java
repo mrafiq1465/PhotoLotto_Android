@@ -440,6 +440,7 @@ public class SelectEventActivity extends BaseActivity implements
 					EventAuthActivity.class);
 			startActivity(intent);
 		} else {
+//			this.finish();
 			Intent intent = new Intent(SelectEventActivity.this,
 					SelectCameraOverlayActivity.class);
 			startActivity(intent);

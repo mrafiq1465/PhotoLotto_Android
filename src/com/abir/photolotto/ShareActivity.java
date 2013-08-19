@@ -306,6 +306,8 @@ public class ShareActivity extends BaseActivity {
 		bm = Utils.rotateBitmap(bm, -5);
 		ImageView imageView = (ImageView) findViewById(R.id.imageViewSharePicture);
 		imageView.setImageBitmap(bm);
+//		bm.recycle();
+//		System.gc();
 
 		arrayAdapter.notifyDataSetChanged();
 		listView.setOnItemClickListener(new OnItemClickListener() {
@@ -388,11 +390,11 @@ public class ShareActivity extends BaseActivity {
 
 				File file = Utils
 						.getFileFromBitmap(SharedImageObjects.mBitmapWithEffect);
-				
+
 				// s3Client.createBucket(Constants.getPictureBucket());
 				// Content type is determined by file extension.
 				SharedImageObjects.mKey = file.getName();
-			
+
 				PutObjectRequest por = new PutObjectRequest(
 						Constants.getPictureBucket(), SharedImageObjects.mKey,
 						file);

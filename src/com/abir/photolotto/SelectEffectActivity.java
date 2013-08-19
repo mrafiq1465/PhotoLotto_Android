@@ -18,31 +18,33 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class SelectEffectActivity extends BaseActivity {
-	
-	private final static int 	FILTER_NO_ONE	= 0;
-	private final static int 	FILTER_NO_TWO	= 1;
-	private final static int 	FILTER_NO_THREE	= 2;
-	private final static int 	FILTER_NO_FOUR	= 3;
-	private final static int 	FILTER_NO_FIVE	= 4;
-	private final static int 	FILTER_NO_SIX	= 5;
-	private final static int 	FILTER_TOTAL	= 6;
-	protected static final String	t	= null;
-	
-	private ImageView			focusView       = null;
-	private GridView			gridview		= null;
-	private final String		tag				= this.getClass().getSimpleName();
-	private TextView			textViewEffectName;
-	private ImageView			imageView;
-	private ImageEffectAdapter	imageEffectAdapter;
-	ImageLoader					mImageLoader;
-	private int					nSelectedItem	= 0;
-	
-	private Bitmap				bitmapIn		= null;
-	private Bitmap				bitmapOut		= null;
+
+	private final static int FILTER_NO_ONE = 0;
+	private final static int FILTER_NO_TWO = 1;
+	// private final static int FILTER_NO_THREE = 2;
+	// private final static int FILTER_NO_FOUR = 3;
+	// private final static int FILTER_NO_FIVE = 4;
+	// private final static int FILTER_NO_SIX = 5;
+	private final static int FILTER_TOTAL = 2;
+	protected static final String t = null;
+
+	private ImageView focusView = null;
+	private GridView gridview = null;
+	private final String tag = this.getClass().getSimpleName();
+	private TextView textViewEffectName;
+	private ImageView imageView;
+	private ImageEffectAdapter imageEffectAdapter;
+	ImageLoader mImageLoader;
+	private int nSelectedItem = 0;
+
+	private Bitmap bitmapIn = null;
+	private Bitmap bitmapOut = null;
 
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+//		startActivity(new Intent(SelectEffectActivity.this,
+//				SelectEventActivity.class));
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class SelectEffectActivity extends BaseActivity {
 		SharedImageListObjects.mEffectImages.clear();
 		SharedImageListObjects.mTempImage.recycle();
 		SharedImageListObjects.mTempImage = null;
-		
+
 		super.onDestroy();
 	}
 
@@ -67,76 +69,89 @@ public class SelectEffectActivity extends BaseActivity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_effects);
-		
+
 		focusView = (ImageView) findViewById(R.id.imageFocusDot);
 		focusView.setVisibility(View.INVISIBLE);
-		
+
 		imageView = (ImageView) findViewById(R.id.full_image_view);
 		textViewEffectName = (TextView) findViewById(R.id.textViewEffectName);
 		textViewEffectName.setText("Normal");
 
 		imageView.setImageBitmap(SharedImageListObjects.mTempImage);
-		
+
 		gridview = (GridView) findViewById(R.id.gridViewEffects);
 		gridview.setGravity(Gravity.CENTER);
 		gridview.setNumColumns(FILTER_TOTAL);
-		imageEffectAdapter = new ImageEffectAdapter(this, SharedImageListObjects.mEffectImages);
+		imageEffectAdapter = new ImageEffectAdapter(this,
+				SharedImageListObjects.mEffectImages);
 		gridview.setAdapter(imageEffectAdapter);
-//		imageEffectAdapter.notifyDataSetChanged();
-		
+		// imageEffectAdapter.notifyDataSetChanged();
+
 		mImageLoader = new ImageLoader(this);
 
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				
+			public void onItemClick(AdapterView<?> parent, View v,
+					int position, long id) {
+				// if (SharedImageListObjects.mEffectImages.size() > 1) {
 				bitmapOut = SharedImageListObjects.mEffectImages.get(position);
 				int h = bitmapOut.getHeight();
 				int w = bitmapOut.getWidth();
 				Canvas canvas = new Canvas(bitmapOut);
 				canvas.drawBitmap(bitmapOut, 0f, 0f, null);
-				Drawable drawable = new BitmapDrawable(getResources(), mImageLoader.getBitmap(SharedImageObjects.mSelectedImageUrl));
+				Drawable drawable = new BitmapDrawable(
+						getResources(),
+						mImageLoader
+								.getBitmap(SharedImageObjects.mSelectedImageUrl));
 				drawable.setBounds(0, 0, w, h);
 				drawable.draw(canvas);
 				imageView.setImageBitmap(bitmapOut);
-				
+
 				nSelectedItem = position;
 				for (int i = 0; i < gridview.getChildCount(); i++) {
-					LinearLayout selImageView = (LinearLayout) gridview.getChildAt(i);
+					LinearLayout selImageView = (LinearLayout) gridview
+							.getChildAt(i);
 					if (i == position) {
-						selImageView.getChildAt(0).setBackgroundColor(0xff00cece);
-						ImageView imageView = (ImageView)(selImageView.getChildAt(1));
-						imageView.setImageResource(R.drawable.filter_dot_selected);
+						selImageView.getChildAt(0).setBackgroundColor(
+								0xff00cece);
+						ImageView imageView = (ImageView) (selImageView
+								.getChildAt(1));
+						imageView
+								.setImageResource(R.drawable.filter_dot_selected);
 					} else {
-						selImageView.getChildAt(0).setBackgroundColor(0x00000000);
-						ImageView imageView = (ImageView)(selImageView.getChildAt(1));
-						imageView.setImageResource(R.drawable.filter_dot_normal);
+						selImageView.getChildAt(0).setBackgroundColor(
+								0x00000000);
+						ImageView imageView = (ImageView) (selImageView
+								.getChildAt(1));
+						imageView
+								.setImageResource(R.drawable.filter_dot_normal);
 					}
 				}
-				
+
 				switch (position) {
-					case FILTER_NO_ONE :
-						textViewEffectName.setText("Normal");
-						break;
-					case FILTER_NO_TWO :
-						textViewEffectName.setText("Sydney");
-						break;
-					case FILTER_NO_THREE :
-						textViewEffectName.setText("London");
-						break;
-					case FILTER_NO_FOUR :
-						textViewEffectName.setText("New York");
-						break;
-					case FILTER_NO_FIVE :
-						textViewEffectName.setText("Paris");
-						break;
-					case FILTER_NO_SIX :
-						textViewEffectName.setText("Tokyo");
-						break;
-					default :
-						break;
+				case FILTER_NO_ONE:
+					textViewEffectName.setText("Normal");
+					break;
+				case FILTER_NO_TWO:
+					textViewEffectName.setText("Sydney");
+					break;
+				// case FILTER_NO_THREE:
+				// textViewEffectName.setText("London");
+				// break;
+				// case FILTER_NO_FOUR:
+				// textViewEffectName.setText("New York");
+				// break;
+				// case FILTER_NO_FIVE:
+				// textViewEffectName.setText("Paris");
+				// break;
+				// case FILTER_NO_SIX:
+				// textViewEffectName.setText("Tokyo");
+				// break;
+				default:
+					break;
 				}
 			}
+			// }
 		});
 		Button button = (Button) findViewById(R.id.buttonShareDone);
 		button.setOnClickListener(new OnClickListener() {
@@ -144,10 +159,12 @@ public class SelectEffectActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 
-				SharedImageObjects.mBitmapWithEffect = (bitmapOut == null) ? bitmapIn : bitmapOut;
-				Intent intent = new Intent(SelectEffectActivity.this, ShareActivity.class);
+				SharedImageObjects.mBitmapWithEffect = (bitmapOut == null) ? bitmapIn
+						: bitmapOut;
+				Intent intent = new Intent(SelectEffectActivity.this,
+						ShareActivity.class);
 				startActivity(intent);
-//				SelectEffectActivity.this.finish();
+				// SelectEffectActivity.this.finish();
 			}
 		});
 
@@ -158,12 +175,12 @@ public class SelectEffectActivity extends BaseActivity {
 				SelectEffectActivity.this.onBackPressed();
 			}
 		});
-		
-		gridview.performItemClick(null, FILTER_NO_SIX, 0);
-		gridview.performItemClick(null, FILTER_NO_FIVE, 0);
-		gridview.performItemClick(null, FILTER_NO_FOUR, 0);
-		gridview.performItemClick(null, FILTER_NO_THREE, 0);
+
+		// gridview.performItemClick(null, FILTER_NO_SIX, 0);
+		// gridview.performItemClick(null, FILTER_NO_FIVE, 0);
+		// gridview.performItemClick(null, FILTER_NO_FOUR, 0);
+		// gridview.performItemClick(null, FILTER_NO_THREE, 0);
 		gridview.performItemClick(null, FILTER_NO_TWO, 0);
 		gridview.performItemClick(null, FILTER_NO_ONE, 0);
-	}	
+	}
 }
