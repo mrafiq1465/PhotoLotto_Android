@@ -14,7 +14,6 @@
  */
 package com.abir.photolotto;
 
-import android.os.Environment;
 
 public class Constants {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -31,8 +30,7 @@ public class Constants {
 	public static final String PICTURE_BUCKET = "appevent";
 	public static final String PICTURE_NAME = "NameOfThePicture";
 
-	public static final String DIRECTORY_PATH = Environment
-			.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/com.abir.photolotto";
+	public static final String DIRECTORY_PATH = Utils.getPath() + "/Android/data/com.abir.photolotto";
 	public static final String ISDOWNLOADEDALLIMAGES = "isDownloadedAllImages";
 
 	public static String getPictureBucket() {

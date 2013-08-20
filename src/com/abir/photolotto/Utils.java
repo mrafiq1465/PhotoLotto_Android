@@ -53,6 +53,19 @@ public class Utils {
 	public final static int REQUEST_ACTIVITY_DONE = 5005;
 	public final static int REQUEST_ACTIVITY_SHARE = 5006;
 
+	public static String getPath() {
+		String path = "";
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
+			path = Environment.getExternalStorageDirectory().getAbsolutePath();
+		} else if ((new File("/mnt/emmc")).exists()) {
+			path = "/mnt/emmc";
+		} else {
+			path = Environment.getExternalStorageDirectory().getAbsolutePath();
+		}
+		return path;
+	}
+
 	public static void copyStream(InputStream is, OutputStream os) {
 		final int buffer_size = 1024;
 		try {
@@ -78,7 +91,7 @@ public class Utils {
 		File fileImage = null;
 		try {
 			File storagePath = new File(
-					Environment.getExternalStorageDirectory(), "PIXTA");
+					Utils.getPath(), "PIXTA");
 			storagePath.mkdirs();
 			String sFileName = Utils.generateUniqueName() + ".jpg";
 			fileImage = new File(storagePath, sFileName);
@@ -133,7 +146,7 @@ public class Utils {
 		try {
 			// this is the file going to use temporally to save the bytes.
 			// This file will not be a image, it will store the raw image data.
-			File file = new File(Environment.getExternalStorageDirectory()
+			File file = new File(Utils.getPath()
 					+ File.separator + "temp.tmp");
 
 			// Open an RandomAccessFile
